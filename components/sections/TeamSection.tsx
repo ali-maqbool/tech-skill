@@ -21,7 +21,7 @@ export default function TeamSection() {
     <section
       id="team"
       aria-labelledby="team-heading"
-      className="overflow-hidden"
+      className="team-section overflow-hidden"
       style={{
         backgroundColor: "var(--color-surface)",
         padding: "5rem 0",
@@ -37,7 +37,7 @@ export default function TeamSection() {
           initial={prefersReduced ? undefined : "hidden"}
           whileInView={prefersReduced ? undefined : "visible"}
           viewport={viewportOnce}
-          className="text-center mb-12"
+          className="team-header text-center mb-12"
         >
           <motion.p
             variants={prefersReduced ? undefined : fadeInUp}
@@ -73,7 +73,7 @@ export default function TeamSection() {
           initial={prefersReduced ? undefined : "hidden"}
           whileInView={prefersReduced ? undefined : "visible"}
           viewport={viewportOnce}
-          className="flex flex-col sm:flex-row items-center sm:items-start gap-6 sm:gap-8 mb-14
+          className="team-founder flex flex-col sm:flex-row items-center sm:items-start gap-6 sm:gap-8 mb-14
                      rounded-2xl p-6 sm:p-8"
           style={{
             backgroundColor: "rgba(0,119,204,0.06)",
@@ -82,17 +82,13 @@ export default function TeamSection() {
         >
           {/* Photo — fixed frame so no layout shift while loading */}
           <div
-            className="relative flex-shrink-0 rounded-2xl overflow-hidden"
-            style={{
-              width: "300px",
-              height: "300px",
-            }}
+            className="founder-photo-frame relative flex-shrink-0 rounded-2xl overflow-hidden w-[min(100%,220px)] h-[220px] sm:w-[300px] sm:h-[300px]"
           >
             <Image
               src={founder.image}
               alt={founder.name}
               fill
-              className="object-cover"
+              className="object-cover founder-photo"
               sizes="160px"
               priority
             />
@@ -127,7 +123,7 @@ export default function TeamSection() {
             </p>
 
             <p
-              className="text-sm leading-relaxed"
+              className="team-founder-bio text-sm leading-relaxed"
               style={{ color: "var(--color-text-muted)" }}
             >
               {founder.bio}
@@ -139,7 +135,7 @@ export default function TeamSection() {
       {/* ── 3. Marquee slideshow ─────────────────────────────── */}
       {/* PRESERVED EXACTLY — only data source changed from inline to import. */}
       {/* Do not modify class names, structure, or Marquee props below.        */}
-      <div className="relative w-full">
+      <div className="team-marquee relative w-full">
         {/* Left edge fade */}
         <div className="pointer-events-none absolute top-0 left-0 z-10 h-full w-32 bg-gradient-to-r from-white to-transparent dark:from-background" />
         {/* Right edge fade */}
@@ -148,7 +144,7 @@ export default function TeamSection() {
         <Marquee className="[--gap:1.5rem]" pauseOnHover>
           {teamMembers.map((member) => (
             <div
-              className="group flex w-64 shrink-0 flex-col"
+              className="team-marquee-card group flex w-64 shrink-0 flex-col"
               key={member.name}
             >
               <div className="relative h-[17rem] w-full overflow-hidden rounded-2xl bg-neutral-100 dark:bg-neutral-800">

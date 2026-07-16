@@ -13,6 +13,7 @@ interface RegistrationModalProps {
   initialCourseId?: string;
   courses: Course[];
   onClose: () => void;
+  onRegistrationSuccess?: (courseId: string) => void;
 }
 
 interface FormErrors {
@@ -71,6 +72,7 @@ export default function RegistrationModal({
   initialCourseId,
   courses,
   onClose,
+  onRegistrationSuccess,
 }: RegistrationModalProps) {
   const [formValues, setFormValues] = useState<FormValues>(EMPTY_FORM);
   const [formErrors, setFormErrors] = useState<FormErrors>({});
@@ -132,10 +134,12 @@ export default function RegistrationModal({
 
     setIsSubmitting(true);
     setSubmitStatus("idle");
+    const registeredCourseId = formValues.course;
 
     try {
       await sendRegistration(formValues);
       setSubmitStatus("success");
+      onRegistrationSuccess?.(registeredCourseId);
       setFormValues(EMPTY_FORM);
       setFormErrors({});
     } catch {

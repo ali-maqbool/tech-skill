@@ -50,7 +50,7 @@ export default function HeroSection({ onRegisterClick }: HeroSectionProps) {
     <section
       id="hero"
       aria-labelledby="hero-heading"
-      className="relative min-h-screen overflow-hidden flex items-center justify-center"
+      className="hero-section relative min-h-screen overflow-hidden flex items-center justify-center"
       style={{ backgroundColor: "#f4f9ffff" }}
     >
       {/* ------------------------------------------------------------------ */}
@@ -148,12 +148,12 @@ export default function HeroSection({ onRegisterClick }: HeroSectionProps) {
         variants={containerVariants}
         initial={isMounted && containerVariants ? "hidden" : false}
         animate="visible"
-        className="relative z-10 flex flex-col items-center text-center px-4 sm:px-6 lg:px-8 max-w-4xl mx-auto py-24"
+        className="hero-content relative z-10 flex flex-col items-center text-center px-4 sm:px-6 lg:px-8 max-w-4xl mx-auto py-24"
       >
         {/* Badge */}
         <motion.div variants={itemVariants}>
           <span
-            className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-sm font-semibold border mb-6"
+            className="hero-badge inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-sm font-semibold border mb-6"
             style={{
               color: "var(--color-primary)",
               borderColor: "var(--color-primary)",
@@ -168,10 +168,11 @@ export default function HeroSection({ onRegisterClick }: HeroSectionProps) {
         <motion.h1
           id="hero-heading"
           variants={itemVariants}
-          className="text-5xl sm:text-6xl lg:text-7xl font-extrabold leading-tight mb-6"
+          className="hero-heading text-5xl sm:text-6xl lg:text-7xl font-extrabold leading-tight mb-6"
           style={{ fontFamily: "var(--font-display)" }}
         >
-          <span
+            <span
+            className="hero-heading-primary"
             style={{
               background: "linear-gradient(90deg, #00aaff 0%, #00ccff 100%)",
               WebkitBackgroundClip: "text",
@@ -182,7 +183,7 @@ export default function HeroSection({ onRegisterClick }: HeroSectionProps) {
             Master Digital Skills
           </span>
           <br />
-          <span style={{ color: "var(--color-text, #ffffff)" }}>
+          <span className="hero-heading-secondary" style={{ color: "var(--color-text, #ffffff)" }}>
             Shape Your Future
           </span>
         </motion.h1>
@@ -200,7 +201,7 @@ export default function HeroSection({ onRegisterClick }: HeroSectionProps) {
         {/* CTA buttons */}
         <motion.div
           variants={itemVariants}
-          className="flex flex-wrap items-center justify-center gap-4 mb-14"
+          className="hero-actions flex flex-wrap items-center justify-center gap-4 mb-14"
         >
           <button
             type="button"
@@ -280,7 +281,7 @@ export default function HeroSection({ onRegisterClick }: HeroSectionProps) {
               ease: "power2.inOut",
             });
           }}
-          className="absolute bottom-8 left-1/2 -translate-x-1/2 animate-float flex flex-col items-center gap-1 cursor-pointer border-0 bg-transparent p-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#00aaff] focus-visible:ring-offset-2 focus-visible:ring-offset-[#0d2035] rounded-full"
+          className="hero-scroll-indicator absolute bottom-8 left-1/2 -translate-x-1/2 animate-float flex flex-col items-center gap-1 cursor-pointer border-0 bg-transparent p-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#00aaff] focus-visible:ring-offset-2 focus-visible:ring-offset-[#0d2035] rounded-full"
           style={{ minHeight: "unset", minWidth: "unset" }}
         >
           <svg

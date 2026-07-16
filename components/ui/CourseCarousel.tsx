@@ -9,6 +9,8 @@ import type { Course } from "@/data/courses";
 // ── Icon map ──────────────────────────────────────────────────────────────────
 function getCourseIcon(id: string): string {
   switch (id) {
+    case "typing":            return "⌨️";
+    case "ms-office":         return "📊";
     case "graphic-design":    return "🎨";
     case "web-development":   return "💻";
     case "digital-marketing": return "📣";
@@ -24,7 +26,8 @@ const clamp = (v: number, lo: number, hi: number) => Math.min(Math.max(v, lo), h
 const SPRING: Transition = { type: "spring", bounce: 0.16, duration: 0.85 };
 
 // ── Responsive geometry hook ──────────────────────────────────────────────────
-// Returns carousel geometry values suited to the current viewport width.
+// Returns responsive geometry values. The vertical offset follows an arc
+// instead of the old diagonal stack.
 function useCarouselGeometry() {
   const [width, setWidth] = React.useState(
     typeof window !== "undefined" ? window.innerWidth : 1280
@@ -37,19 +40,19 @@ function useCarouselGeometry() {
   }, []);
 
   if (width < 480) {
-    // Very small phones: compact single-card view
-    return { slideSize: 220, rotationStep: 22, verticalStep: 70, inactiveScale: 0.55, topPct: "8%" };
+    // Very small phones: one readable card with a shallow arc.
+    return { width, slideSize: Math.max(244, width - 48), rotationStep: 14, arcRadius: 30, inactiveScale: 0.68, topPct: "3%" };
   }
   if (width < 768) {
     // Phones / small tablets
-    return { slideSize: 260, rotationStep: 26, verticalStep: 88, inactiveScale: 0.58, topPct: "10%" };
+    return { width, slideSize: Math.min(300, width - 56), rotationStep: 16, arcRadius: 38, inactiveScale: 0.66, topPct: "5%" };
   }
   if (width < 1024) {
     // Tablets
-    return { slideSize: 280, rotationStep: 27, verticalStep: 96, inactiveScale: 0.60, topPct: "12%" };
+    return { width, slideSize: 300, rotationStep: 18, arcRadius: 46, inactiveScale: 0.64, topPct: "9%" };
   }
   // Desktop
-  return { slideSize: 300, rotationStep: 28, verticalStep: 105, inactiveScale: 0.62, topPct: "16%" };
+  return { width, slideSize: 300, rotationStep: 20, arcRadius: 58, inactiveScale: 0.62, topPct: "13%" };
 }
 
 // ── Props ──────────────────────────────────────────────────────────────────────
@@ -64,6 +67,7 @@ interface CourseCarouselProps {
   showControls?: boolean;
   showDots?: boolean;
   className?: string;
+  enrollmentCounts?: Record<string, number>;
 }
 
 // ── Component ──────────────────────────────────────────────────────────────────
@@ -79,6 +83,7 @@ export function CourseCarousel({
   // showDots prop kept for API compatibility; dots removed in favour of arrow buttons
   showDots: _showDots = true, // eslint-disable-line @typescript-eslint/no-unused-vars
   className,
+  enrollmentCounts,
 }: CourseCarouselProps) {
   const prefersReduced = useReducedMotion();
   const geo = useCarouselGeometry();
@@ -139,11 +144,12 @@ export function CourseCarousel({
         <motion.div
           style={{
             position: "absolute",
+            left: 0,
             top: geo.topPct,
             display: "flex",
             width: "fit-content",
           }}
-          animate={{ x: `calc(50vw - ${current * geo.slideSize + geo.slideSize / 2}px)` }}
+          animate={{ x: (geo.width / 2) - (current * geo.slideSize + geo.slideSize / 2) }}
           transition={effectiveTx}
         >
           {courses.map((course, index) => {
@@ -152,6 +158,9 @@ export function CourseCarousel({
             const icon     = getCourseIcon(course.id);
             const timing   = course.timings[0] ?? "";
             const duration = course.Durtion ?? "";
+            const studentCount = enrollmentCounts?.[course.id] ?? course.students ?? 0;
+            const arcDistance = Math.min(Math.abs(distance), 4);
+            const arcY = (1 - Math.cos(arcDistance * (Math.PI / 5))) * geo.arcRadius;
 
             return (
               <motion.div
@@ -161,7 +170,7 @@ export function CourseCarousel({
                 animate={{
                   rotate: distance * geo.rotationStep,
                   scale:  isActive ? 1 : safeScale,
-                  y:      distance * geo.verticalStep,
+                  y:      arcY,
                 }}
                 transition={effectiveTx}
               >
@@ -175,7 +184,7 @@ export function CourseCarousel({
                   style={{ background: "none", border: "none", padding: 0 }}
                 >
                   <div
-                    className="glass-card"
+                    className="course-card glass-card"
                     style={{
                       width: "100%",
                       aspectRatio: "1 / 1.1",
@@ -208,6 +217,13 @@ export function CourseCarousel({
                     <h3 style={{ fontFamily: "var(--font-display,inherit)", fontSize: "1.05rem", fontWeight: 700, color: "#395186ff", margin: 0, lineHeight: 1.2 }}>
                       {course.name}
                     </h3>
+                    <div
+                      className="course-student-count"
+                      aria-label={`${studentCount.toLocaleString()} students enrolled in ${course.name}`}
+                    >
+                      <span className="course-student-count-icon" aria-hidden="true">👥</span>
+                      <span><strong>{studentCount.toLocaleString()}</strong> students enrolled</span>
+                    </div>
                     <p style={{ color: "var(--color-text-muted)", fontSize: "0.78rem", lineHeight: 1.5, margin: 0, overflow: "hidden", display: "-webkit-box", WebkitLineClamp: 2, WebkitBoxOrient: "vertical", flexGrow: 1 }}>
                       {course.description}
                     </p>

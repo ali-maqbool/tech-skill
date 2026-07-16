@@ -17,9 +17,10 @@ const revealChild: Variants = {
 interface CoursesSectionProps {
   courses: Course[];
   onRegisterClick: (courseId: string) => void;
+  enrollmentCounts?: Record<string, number>;
 }
 
-export default function CoursesSection({ courses, onRegisterClick }: CoursesSectionProps) {
+export default function CoursesSection({ courses, onRegisterClick, enrollmentCounts }: CoursesSectionProps) {
   const prefersReduced = useReducedMotion();
 
   return (
@@ -82,6 +83,7 @@ export default function CoursesSection({ courses, onRegisterClick }: CoursesSect
         <CourseCarousel
           courses={courses}
           onRegisterClick={onRegisterClick}
+          enrollmentCounts={enrollmentCounts}
           defaultActiveIndex={2}
           loop
           showControls

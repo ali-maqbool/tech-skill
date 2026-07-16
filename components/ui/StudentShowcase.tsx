@@ -7,10 +7,10 @@ import { students, type Student } from "@/data/students";
 // ── Card — pixel-identical to spec, colours mapped to site palette ────────────
 function StudentCard({ member }: { member: Student }) {
   return (
-    <div className="group flex w-56 shrink-0 flex-col">
+    <div className="student-showcase-card group flex w-56 shrink-0 flex-col">
       <div
-        className="relative w-full overflow-hidden rounded-2xl"
-        style={{ height: "17rem", backgroundColor: "var(--color-surface-alt, #eef4ff)" }}
+        className="student-showcase-image relative w-full overflow-hidden rounded-2xl"
+        style={{ backgroundColor: "var(--color-surface-alt, #eef4ff)" }}
       >
         <Image
           alt={member.name}
@@ -52,7 +52,7 @@ export default function StudentShowcase() {
 
   return (
     <section
-      className="relative w-full overflow-hidden py-12 md:py-20"
+      className="student-showcase relative w-full overflow-hidden py-12 md:py-20"
       style={{ backgroundColor: "var(--color-background)" }}
     >
       {/* Background squiggle artwork — colour-mapped to site palette */}
@@ -85,10 +85,10 @@ export default function StudentShowcase() {
 
       <div className="relative z-10 mx-auto max-w-7xl">
         {/* ── Section heading ─────────────────────────────────── */}
-        <div className="mx-auto mb-14 flex max-w-5xl flex-col items-center px-6 text-center lg:px-0">
+        <div className="student-showcase-header mx-auto mb-14 flex max-w-5xl flex-col items-center px-6 text-center lg:px-0">
           {/* Icon badge */}
           <div
-            className="mb-6 flex h-12 w-12 items-center justify-center rounded-xl text-white"
+            className="student-showcase-icon mb-6 flex h-12 w-12 items-center justify-center rounded-xl text-white"
             style={{ backgroundColor: "var(--color-primary)" }}
           >
             <svg
@@ -111,7 +111,7 @@ export default function StudentShowcase() {
 
           {/* Heading with squiggle decoration */}
           <h2
-            className="relative mb-4 font-bold text-4xl tracking-tight sm:text-5xl"
+            className="student-showcase-heading relative mb-4 font-bold text-4xl tracking-tight sm:text-5xl"
             style={{
               color: "var(--color-text)",
               fontFamily: "var(--font-display)",
@@ -139,7 +139,7 @@ export default function StudentShowcase() {
           </h2>
 
           <p
-            className="max-w-2xl text-base leading-relaxed"
+            className="student-showcase-description max-w-2xl text-base leading-relaxed"
             style={{ color: "var(--color-text-muted)" }}
           >
             Every student below graduated with a real portfolio and real skills.
@@ -163,7 +163,7 @@ export default function StudentShowcase() {
                 "linear-gradient(to left, var(--color-background), transparent)",
             }}
           />
-          <Marquee className="[--gap:1.5rem]" pauseOnHover>
+          <Marquee className="student-marquee [--gap:1.5rem]" pauseOnHover>
             {topRow.map((member) => (
               <StudentCard key={member.name} member={member} />
             ))}
@@ -171,7 +171,7 @@ export default function StudentShowcase() {
         </div>
 
         {/* ── Row 2 — scrolls left to right (reverse) ─────────── */}
-        <div className="relative mt-6 w-full">
+        <div className="student-showcase-row-2 relative mt-6 w-full">
           <div
             className="pointer-events-none absolute top-0 left-0 z-10 h-full w-32"
             style={{
@@ -186,7 +186,7 @@ export default function StudentShowcase() {
                 "linear-gradient(to left, var(--color-background), transparent)",
             }}
           />
-          <Marquee className="[--gap:1.5rem]" pauseOnHover reverse>
+          <Marquee className="student-marquee [--gap:1.5rem]" pauseOnHover reverse>
             {bottomRow.map((member) => (
               <StudentCard key={member.name} member={member} />
             ))}

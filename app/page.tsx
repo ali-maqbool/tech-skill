@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { COURSES } from "@/data/courses";
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
@@ -18,10 +18,32 @@ import Preloader from "@/components/ui/Preloader";
 export default function HomePage() {
   const [modalOpen, setModalOpen] = useState(false);
   const [preselectedCourse, setPreselectedCourse] = useState<string | undefined>();
+  const [enrollmentCounts, setEnrollmentCounts] = useState<Record<string, number>>(
+    () => Object.fromEntries(COURSES.map((course) => [course.id, course.students ?? 0]))
+  );
+
+  useEffect(() => {
+    const saved = window.localStorage.getItem("tech-skill-course-enrollments");
+    if (!saved) return;
+    try {
+      const parsed = JSON.parse(saved) as Record<string, number>;
+      setEnrollmentCounts((current) => ({ ...current, ...parsed }));
+    } catch {
+      // Ignore malformed local data and keep the course defaults.
+    }
+  }, []);
 
   function openModal(courseId?: string) {
     setPreselectedCourse(courseId);
     setModalOpen(true);
+  }
+
+  function handleRegistrationSuccess(courseId: string) {
+    setEnrollmentCounts((current) => {
+      const next = { ...current, [courseId]: (current[courseId] ?? 0) + 1 };
+      window.localStorage.setItem("tech-skill-course-enrollments", JSON.stringify(next));
+      return next;
+    });
   }
 
   return (
@@ -33,7 +55,11 @@ export default function HomePage() {
         <HeroSection onRegisterClick={() => openModal()} />
 
         {/* 2 — Our Courses */}
-        <CoursesSection courses={COURSES} onRegisterClick={openModal} />
+        <CoursesSection
+          courses={COURSES}
+          onRegisterClick={openModal}
+          enrollmentCounts={enrollmentCounts}
+        />
 
         {/* 3 — How It Works / Learning Path */}
         <LearningPath />
@@ -62,6 +88,7 @@ export default function HomePage() {
         initialCourseId={preselectedCourse}
         courses={COURSES}
         onClose={() => setModalOpen(false)}
+        onRegistrationSuccess={handleRegistrationSuccess}
       />
     </>
   );
