@@ -1,6 +1,7 @@
 "use client";
 
 import { motion, useReducedMotion, type Variants } from "framer-motion";
+import { useEffect, useRef, useState } from "react";
 import { Course } from "@/data/courses";
 import CourseCarousel from "@/components/ui/CourseCarousel";
 
@@ -22,6 +23,36 @@ interface CoursesSectionProps {
 
 export default function CoursesSection({ courses, onRegisterClick, enrollmentCounts }: CoursesSectionProps) {
   const prefersReduced = useReducedMotion();
+  const [activeCourse, setActiveCourse] = useState(0);
+  const scrollTrackRef = useRef<HTMLDivElement>(null);
+  const stickySteps = Math.min(3, courses.length);
+
+  useEffect(() => {
+    if (prefersReduced || stickySteps <= 1) return;
+
+    let frame = 0;
+    const updateFromScroll = () => {
+      cancelAnimationFrame(frame);
+      frame = requestAnimationFrame(() => {
+        const track = scrollTrackRef.current;
+        if (!track) return;
+        const availableScroll = Math.max(track.offsetHeight - window.innerHeight, 1);
+        const travelled = Math.max(0, -track.getBoundingClientRect().top);
+        const progress = Math.min(0.999, travelled / availableScroll);
+        const nextCourse = Math.min(stickySteps - 1, Math.floor(progress * stickySteps));
+        setActiveCourse((current) => current === nextCourse ? current : nextCourse);
+      });
+    };
+
+    updateFromScroll();
+    window.addEventListener("scroll", updateFromScroll, { passive: true });
+    window.addEventListener("resize", updateFromScroll);
+    return () => {
+      cancelAnimationFrame(frame);
+      window.removeEventListener("scroll", updateFromScroll);
+      window.removeEventListener("resize", updateFromScroll);
+    };
+  }, [prefersReduced, stickySteps]);
 
   return (
     <section
@@ -72,24 +103,31 @@ export default function CoursesSection({ courses, onRegisterClick, enrollmentCou
         Height drives the visual space; the diagonal stack needs room to breathe.
         On mobile we reduce the height and card size via CSS.
       */}
+      <div
+        ref={scrollTrackRef}
+        className="courses-scroll-track"
+        style={{ height: prefersReduced ? "100svh" : `${Math.max(stickySteps, 1) * 100}svh` }}
+      >
       <motion.div
         initial={prefersReduced ? false : { opacity: 0 }}
         whileInView={{ opacity: 1 }}
         viewport={{ once: true }}
         transition={{ duration: 0.6, delay: 0.25 }}
-        className="courses-carousel-wrapper"
-        style={{ width: "100%", height: "640px", position: "relative" }}
+        className={`courses-carousel-wrapper ${prefersReduced ? "" : "courses-sticky-frame"}`}
       >
         <CourseCarousel
           courses={courses}
           onRegisterClick={onRegisterClick}
           enrollmentCounts={enrollmentCounts}
-          defaultActiveIndex={2}
-          loop
+          activeIndex={activeCourse}
+          onActiveIndexChange={setActiveCourse}
+          defaultActiveIndex={0}
+          loop={false}
           showControls
           showDots
         />
       </motion.div>
+      </div>
 
     </section>
   );

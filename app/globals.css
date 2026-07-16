@@ -333,6 +333,21 @@ button,
 @media (min-width: 480px) and (max-width: 767px)  { .courses-carousel-wrapper { height: 620px !important; } }
 @media (min-width: 768px) and (max-width: 1023px) { .courses-carousel-wrapper { height: 660px !important; } }
 
+/* The course frame stays pinned while three course states advance with scroll. */
+.courses-sticky-frame {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  height: 100svh !important;
+  min-height: 36rem;
+}
+
+/* Faster, still readable motion for both marquee sections. */
+.team-marquee > .group,
+.student-marquee {
+  --duration: 24s;
+}
+
 /* ============================================================
    Mobile polish: hero, course cards, team and student marquees
    ============================================================ */
@@ -579,5 +594,12 @@ button,
     padding-right: 0.75rem;
     padding-left: 0.75rem;
     font-size: 0.78rem;
+  }
+}
+
+@media (max-width: 767px) {
+  .courses-sticky-frame {
+    height: 100svh !important;
+    min-height: 0;
   }
 }

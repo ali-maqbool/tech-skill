@@ -77,7 +77,7 @@ export default function TeamSection() {
                      rounded-2xl p-6 sm:p-8"
           style={{
             backgroundColor: "rgba(0,119,204,0.06)",
-            border: "1px solid rgba(0,119,204,0.18)",
+            border: "1px solid rgba(0, 119, 204, 0.55)",
           }}
         >
           {/* Photo — fixed frame so no layout shift while loading */}
