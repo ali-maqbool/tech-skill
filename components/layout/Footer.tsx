@@ -75,9 +75,9 @@ const ICON_MAP: Record<string, React.ReactNode> = {
 };
 
 const QUICK_LINKS = [
-  { label: "Courses", href: "#courses" },
-  { label: "About", href: "#about" },
-  { label: "Contact", href: "#contact" },
+  { label: "Courses", href: "/#courses" },
+  { label: "About", href: "/about" },
+  { label: "Contact", href: "/contact" },
 ];
 
 /* ── Footer component ─────────────────────────────────────── */
@@ -107,7 +107,7 @@ export default function Footer() {
             className="flex flex-col gap-3"
           >
             {/* Logo — inverted to white for clean visibility on dark background */}
-            <a href="#hero" aria-label={`${CONTACT_INFO.instituteName} — back to top`}>
+            <a href="/" aria-label={`${CONTACT_INFO.instituteName} — back to top`}>
               <Image
                 src="/logo.png"
                 alt={`${CONTACT_INFO.instituteName} logo`}

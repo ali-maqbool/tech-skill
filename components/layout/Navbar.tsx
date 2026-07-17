@@ -3,25 +3,18 @@
 import { useState, useEffect } from "react";
 import Image from "next/image";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
-import { gsap } from "gsap";
-import { ScrollToPlugin } from "gsap/ScrollToPlugin";
 import { CONTACT_INFO } from "@/data/contacts";
-
-if (typeof window !== "undefined") {
-  gsap.registerPlugin(ScrollToPlugin);
-}
 
 interface NavbarProps {
   onRegisterClick?: () => void;
 }
 
 const NAV_LINKS = [
-  { label: "Courses",          href: "#courses" },
-  { label: "How It Works",     href: "#learning-path" },
-  { label: "Why Us",           href: "#about" },
-  { label: "Outcomes",         href: "#outcomes" },
-  { label: "Success Stories",  href: "#success-stories" },
-  { label: "Contact",          href: "#contact" },
+  { label: "Home", href: "/" },
+  { label: "Courses", href: "/#courses" },
+  { label: "Outcomes", href: "/#outcomes" },
+  { label: "About", href: "/about" },
+  { label: "Contact", href: "/contact" },
 ];
 
 export default function Navbar({ onRegisterClick }: NavbarProps) {
@@ -37,11 +30,7 @@ export default function Navbar({ onRegisterClick }: NavbarProps) {
     const NAVBAR_HEIGHT = 68; // px — slight buffer above the 64px navbar
     const ALL_SECTIONS = [
       "courses",
-      "learning-path",
-      "about",
       "outcomes",
-      "success-stories",
-      "contact",
     ];
 
     function updateActive() {
@@ -73,24 +62,6 @@ export default function Navbar({ onRegisterClick }: NavbarProps) {
   }, []);
 
 
-  function handleSmoothScroll(e: React.MouseEvent<HTMLAnchorElement>, href: string) {
-    e.preventDefault();
-    const target = href.replace("#", "");
-    const el = document.getElementById(target);
-    if (!el) return;
-
-    if (prefersReduced) {
-      el.scrollIntoView();
-    } else {
-      gsap.to(window, {
-        duration: 0.4,
-        scrollTo: { y: el, offsetY: 64 },
-        ease: "power2.out",
-      });
-    }
-    setMenuOpen(false);
-  }
-
   return (
     <motion.header
       initial={prefersReduced ? false : { y: -80, opacity: 0 }}
@@ -105,10 +76,10 @@ export default function Navbar({ onRegisterClick }: NavbarProps) {
       >
         {/* Logo image */}
         <a
-          href="#hero"
+          href="/"
           className="flex-shrink-0 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#00aaff] focus-visible:ring-offset-2 focus-visible:ring-offset-[#1e2d3d] rounded"
           aria-label={`${CONTACT_INFO.instituteName} — go to top`}
-          onClick={(e) => handleSmoothScroll(e, "#hero")}
+          onClick={() => setMenuOpen(false)}
         >
           <Image
             src="/logo.png"
@@ -132,13 +103,13 @@ export default function Navbar({ onRegisterClick }: NavbarProps) {
             role="list"
           >
             {NAV_LINKS.map((link) => {
-              const sectionId = link.href.replace("#", "");
+              const sectionId = link.href.replace("/#", "");
               const isActive = activeSection === sectionId;
               return (
                 <li key={link.href}>
                   <a
                     href={link.href}
-                    onClick={(e) => handleSmoothScroll(e, link.href)}
+                    onClick={() => setMenuOpen(false)}
                     className="nav-pill-link relative flex items-center px-3 py-1.5 text-sm font-semibold rounded-full transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#007acc] focus-visible:ring-offset-2 focus-visible:ring-offset-[#eaf6ff]"
                     style={{
                       color: isActive ? "#005fa3" : "#0d2f45",
@@ -183,7 +154,7 @@ export default function Navbar({ onRegisterClick }: NavbarProps) {
           {/* CTA Button */}
           <button
             type="button"
-            onClick={onRegisterClick}
+            onClick={onRegisterClick ?? (() => { window.location.href = "/#courses"; })}
             className="btn-primary text-sm"
             style={{ fontFamily: "var(--font-display)" }}
           >
@@ -239,13 +210,13 @@ export default function Navbar({ onRegisterClick }: NavbarProps) {
             <div className="max-w-7xl mx-auto px-4 sm:px-6 py-5 flex flex-col gap-1">
               <ul className="list-none m-0 p-0 flex flex-col gap-1" role="list">
                 {NAV_LINKS.map((link) => {
-                  const sectionId = link.href.replace("#", "");
+                  const sectionId = link.href.replace("/#", "");
                   const isActive = activeSection === sectionId;
                   return (
                     <li key={link.href}>
                       <a
                         href={link.href}
-                        onClick={(e) => handleSmoothScroll(e, link.href)}
+                        onClick={() => setMenuOpen(false)}
                         className="block w-full py-3 px-2 text-base font-medium hover:bg-[#1a3340]/5 rounded-lg transition-colors duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#00aaff] focus-visible:ring-offset-2 focus-visible:ring-offset-white"
                         style={{ color: isActive ? "#007acc" : "#0d2f45" }}
                       >
@@ -259,10 +230,11 @@ export default function Navbar({ onRegisterClick }: NavbarProps) {
               <div className="mt-3 pt-3 border-t border-[#1a3340]/10">
                 <button
                   type="button"
-                  onClick={() => {
-                    setMenuOpen(false);
-                    onRegisterClick?.();
-                  }}
+                    onClick={() => {
+                      setMenuOpen(false);
+                      if (onRegisterClick) onRegisterClick();
+                      else window.location.href = "/#courses";
+                    }}
                   className="btn-primary w-full text-sm"
                   style={{ fontFamily: "var(--font-display)" }}
                 >

@@ -109,7 +109,7 @@ export default function TeamSection() {
             </span>
 
             <h3
-              className="text-xl font-bold"
+              className="text-3xl font-bold sm:text-4xl"
               style={{ color: "var(--color-text)", fontFamily: "var(--font-display)" }}
             >
               {founder.name}

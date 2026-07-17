@@ -17,22 +17,43 @@ export interface FormValues {
   startDate: string;
 }
 
-export async function sendRegistration(formValues: FormValues): Promise<void> {
-  try {
-    await emailjs.send(
-      process.env.NEXT_PUBLIC_EMAILJS_SERVICE_ID!,
-      process.env.NEXT_PUBLIC_EMAILJS_TEMPLATE_ID!,
-      {
-        full_name: formValues.fullName,
-        phone: formValues.phone,
-        email: formValues.email,
-        course: formValues.course,
-        timing: formValues.timing,
-        start_date: formValues.startDate,
-      },
-      process.env.NEXT_PUBLIC_EMAILJS_PUBLIC_KEY!
-    );
-  } catch (error) {
-    throw error;
+export interface ContactFormValues {
+  name: string;
+  email: string;
+  phone: string;
+  course: string;
+  message: string;
+}
+
+function getEmailJsConfig(templateId: string | undefined) {
+  const serviceId = process.env.NEXT_PUBLIC_EMAILJS_SERVICE_ID;
+  const publicKey = process.env.NEXT_PUBLIC_EMAILJS_PUBLIC_KEY;
+  const values = [serviceId, templateId, publicKey];
+  if (values.some((value) => !value || value.startsWith("your_"))) {
+    throw new Error("Email delivery is not configured yet. Please add your EmailJS IDs to .env.local.");
   }
+  return { serviceId: serviceId!, templateId: templateId!, publicKey: publicKey! };
+}
+
+export async function sendRegistration(formValues: FormValues): Promise<void> {
+  const { serviceId, templateId, publicKey } = getEmailJsConfig(process.env.NEXT_PUBLIC_EMAILJS_TEMPLATE_ID);
+  await emailjs.send(serviceId, templateId, {
+    full_name: formValues.fullName,
+    phone: formValues.phone,
+    email: formValues.email,
+    course: formValues.course,
+    timing: formValues.timing,
+    start_date: formValues.startDate,
+  }, publicKey);
+}
+
+export async function sendContactMessage(formValues: ContactFormValues): Promise<void> {
+  const { serviceId, templateId, publicKey } = getEmailJsConfig(process.env.NEXT_PUBLIC_EMAILJS_CONTACT_TEMPLATE_ID);
+  await emailjs.send(serviceId, templateId, {
+    from_name: formValues.name,
+    reply_to: formValues.email,
+    phone: formValues.phone || "Not provided",
+    course: formValues.course || "General enquiry",
+    message: formValues.message,
+  }, publicKey);
 }

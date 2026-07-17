@@ -7,10 +7,10 @@ import { students, type Student } from "@/data/students";
 // ── Card — pixel-identical to spec, colours mapped to site palette ────────────
 function StudentCard({ member }: { member: Student }) {
   return (
-    <div className="student-showcase-card group flex w-56 shrink-0 flex-col">
+    <div className="student-showcase-card group flex w-44 shrink-0 flex-col sm:w-52">
       <div
         className="student-showcase-image relative w-full overflow-hidden rounded-2xl"
-        style={{ backgroundColor: "var(--color-surface-alt, #eef4ff)" }}
+        style={{ height: "22rem", backgroundColor: "var(--color-surface-alt, #eef4ff)" }}
       >
         <Image
           alt={member.name}
@@ -36,6 +36,9 @@ function StudentCard({ member }: { member: Student }) {
           >
             {member.role}
           </p>
+          <p className="mt-2 text-xs leading-relaxed" style={{ color: "#315b7a" }}>
+            “{member.review}”
+          </p>
         </div>
       </div>
     </div>
@@ -44,12 +47,6 @@ function StudentCard({ member }: { member: Student }) {
 
 // ── Main component ─────────────────────────────────────────────────────────────
 export default function StudentShowcase() {
-  // Split roster into two balanced rows.
-  // Adding to /data/students.ts automatically flows into one row.
-  const midpoint = Math.ceil(students.length / 2);
-  const topRow    = students.slice(0, midpoint);
-  const bottomRow = students.slice(midpoint);
-
   return (
     <section
       className="student-showcase relative w-full overflow-hidden py-12 md:py-20"
@@ -163,15 +160,15 @@ export default function StudentShowcase() {
                 "linear-gradient(to left, var(--color-background), transparent)",
             }}
           />
-          <Marquee className="student-marquee [--gap:1.5rem]" pauseOnHover>
-            {topRow.map((member) => (
+          <Marquee className="student-marquee [--gap:1.5rem]" pauseOnHover repeat={4}>
+            {students.map((member) => (
               <StudentCard key={member.name} member={member} />
             ))}
           </Marquee>
         </div>
 
         {/* ── Row 2 — scrolls left to right (reverse) ─────────── */}
-        <div className="student-showcase-row-2 relative mt-6 w-full">
+        <div className="hidden student-showcase-row-2 relative mt-6 w-full" aria-hidden="true">
           <div
             className="pointer-events-none absolute top-0 left-0 z-10 h-full w-32"
             style={{
@@ -187,7 +184,7 @@ export default function StudentShowcase() {
             }}
           />
           <Marquee className="student-marquee [--gap:1.5rem]" pauseOnHover reverse>
-            {bottomRow.map((member) => (
+            {students.map((member) => (
               <StudentCard key={member.name} member={member} />
             ))}
           </Marquee>

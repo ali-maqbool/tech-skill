@@ -28,24 +28,19 @@ const SPRING: Transition = { type: "spring", bounce: 0.16, duration: 0.85 };
 // ── Responsive geometry hook ──────────────────────────────────────────────────
 // Returns responsive geometry values. The vertical offset follows an arc
 // instead of the old diagonal stack.
-function useCarouselGeometry() {
-  const [width, setWidth] = React.useState(
-    typeof window !== "undefined" ? window.innerWidth : 1280
-  );
+function useCarouselGeometry(width: number) {
 
-  React.useEffect(() => {
-    const handler = () => setWidth(window.innerWidth);
-    window.addEventListener("resize", handler);
-    return () => window.removeEventListener("resize", handler);
-  }, []);
-
+  if (width < 360) {
+    // Very small phones (< 360px): active card fills almost the full width
+    return { width, slideSize: Math.max(1, width - 24), rotationStep: 6, arcRadius: 10, inactiveScale: 0.7, topPct: "3%" };
+  }
   if (width < 480) {
-    // Very small phones: one readable card with a shallow arc.
-    return { width, slideSize: Math.max(244, width - 48), rotationStep: 14, arcRadius: 30, inactiveScale: 0.68, topPct: "3%" };
+    // Small phones: card is nearly full width, very gentle rotation
+    return { width, slideSize: Math.max(1, width - 28), rotationStep: 8, arcRadius: 14, inactiveScale: 0.72, topPct: "4%" };
   }
   if (width < 768) {
     // Phones / small tablets
-    return { width, slideSize: Math.min(300, width - 56), rotationStep: 16, arcRadius: 38, inactiveScale: 0.66, topPct: "5%" };
+    return { width, slideSize: Math.min(320, width - 40), rotationStep: 12, arcRadius: 24, inactiveScale: 0.72, topPct: "5%" };
   }
   if (width < 1024) {
     // Tablets
@@ -86,7 +81,11 @@ export function CourseCarousel({
   enrollmentCounts,
 }: CourseCarouselProps) {
   const prefersReduced = useReducedMotion();
-  const geo = useCarouselGeometry();
+  const carouselRef = React.useRef<HTMLDivElement>(null);
+  const [containerWidth, setContainerWidth] = React.useState(
+    typeof window === "undefined" ? 1280 : window.innerWidth
+  );
+  const geo = useCarouselGeometry(containerWidth);
   const maxIndex = Math.max(0, courses.length - 1);
 
   const [uncontrolled, setUncontrolled] = React.useState(() =>
@@ -94,6 +93,17 @@ export function CourseCarousel({
   );
   const current = clamp(activeIndex ?? uncontrolled, 0, maxIndex);
   const safeScale = clamp(geo.inactiveScale, 0.35, 1);
+
+  React.useEffect(() => {
+    const element = carouselRef.current;
+    if (!element) return;
+
+    const updateWidth = () => setContainerWidth(Math.max(1, element.clientWidth));
+    updateWidth();
+    const observer = new ResizeObserver(updateWidth);
+    observer.observe(element);
+    return () => observer.disconnect();
+  }, []);
 
   const selectSlide = React.useCallback(
     (next: number) => {
@@ -118,6 +128,7 @@ export function CourseCarousel({
 
   return (
     <div
+      ref={carouselRef}
       role="region"
       aria-roledescription="carousel"
       aria-label="Course carousel"
@@ -125,7 +136,7 @@ export function CourseCarousel({
       onKeyDown={handleKeyDown}
       className={cn("relative isolate h-full w-full outline-none", className)}
       // Clip the side cards but allow the CTA + controls to show below
-      style={{ overflow: "hidden" }}
+      style={{ overflow: "hidden", touchAction: "pan-y" }}
     >
       {/* ── Diagonal stack ─────────────────────────────────── */}
       {/*

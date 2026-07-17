@@ -153,26 +153,26 @@ export default function HeroSection({ onRegisterClick }: HeroSectionProps) {
         {/* Badge */}
         <motion.div variants={itemVariants}>
           <span
-            className="hero-badge inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-sm font-semibold border mb-6"
+            className="hero-badge inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-sm font-semibold border mb-3"
             style={{
-              color: "var(--color-primary)",
-              borderColor: "var(--color-primary)",
-              backgroundColor: "rgba(0,170,255,0.08)",
+              color: "#005fa3",
+              borderColor: "rgba(0, 95, 163, 0.52)",
+              backgroundColor: "rgba(0, 119, 204, 0.18)",
             }}
           >
-            🚀 Pakistan&apos;s #1 Tech Institute
+             Pakistan&apos;s #1 Tech Institute
           </span>
         </motion.div>
 
-        {/* H1 heading */}
+        {/* H1 heading — blue line + white line, each stays on exactly one line */}
         <motion.h1
           id="hero-heading"
           variants={itemVariants}
-          className="hero-heading text-5xl sm:text-6xl lg:text-7xl font-extrabold leading-tight mb-6"
-          style={{ fontFamily: "var(--font-display)" }}
+          className="font-extrabold leading-tight mb-6 w-full"
+          style={{ fontFamily: "var(--font-display)", fontSize: "clamp(2.2rem, 6vw, 5rem)" }}
         >
             <span
-            className="hero-heading-primary"
+            className="block whitespace-nowrap"
             style={{
               background: "linear-gradient(90deg, #00aaff 0%, #00ccff 100%)",
               WebkitBackgroundClip: "text",
@@ -182,8 +182,7 @@ export default function HeroSection({ onRegisterClick }: HeroSectionProps) {
           >
             Master Digital Skills
           </span>
-          <br />
-          <span className="hero-heading-secondary" style={{ color: "var(--color-text, #ffffff)" }}>
+          <span className="block whitespace-nowrap" style={{ color: "var(--color-text, #ffffff)" }}>
             Shape Your Future
           </span>
         </motion.h1>
@@ -191,7 +190,7 @@ export default function HeroSection({ onRegisterClick }: HeroSectionProps) {
         {/* Subheading */}
         <motion.p
           variants={itemVariants}
-          className="text-lg sm:text-xl max-w-2xl mb-10 leading-relaxed"
+          className="text-xl sm:text-2xl max-w-2xl mb-10 leading-relaxed"
           style={{ color: "rgba(46, 99, 122, 0.85)" }}
         >
           Join thousands of students learning Graphic Design, Web Development,
