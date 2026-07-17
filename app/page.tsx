@@ -26,7 +26,7 @@ export const metadata: Metadata = {
     description: SITE_DESCRIPTION,
     siteName: "Tech Skill",
     locale: "en_PK",
-    images: [{ url: "/logo.png", width: 1200, height: 630, alt: "Tech Skill technical courses in Islamabad" }],
+    images: [{ url: "/og.png", width: 1200, height: 630, alt: "Tech Skill technical courses in Islamabad" }],
   },
   twitter: {
     card: "summary_large_image",
