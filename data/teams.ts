@@ -56,7 +56,7 @@ export const teamMembers: TeamMember[] = [
   },
   {
     image: "/girl 6.png",
-    name: "Amna Iqbal",
+    name: "Muskan Manzoor",
     role: "Digital Marketing Lead",
   },
   {

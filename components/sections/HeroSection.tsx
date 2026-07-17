@@ -193,8 +193,8 @@ export default function HeroSection({ onRegisterClick }: HeroSectionProps) {
           className="text-xl sm:text-2xl max-w-2xl mb-10 leading-relaxed"
           style={{ color: "rgba(46, 99, 122, 0.85)" }}
         >
-          Join thousands of students learning Graphic Design, Web Development,
-          Digital Marketing, Freelancing, and Video Editing
+          Join students in Islamabad learning Graphic Design, Web Development,
+          Digital Marketing, Freelancing, Video Editing, and other practical technical skills.
         </motion.p>
 
         {/* CTA buttons */}

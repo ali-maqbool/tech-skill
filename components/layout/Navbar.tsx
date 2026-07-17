@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import Image from "next/image";
+import { usePathname } from "next/navigation";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import { CONTACT_INFO } from "@/data/contacts";
 
@@ -12,6 +13,7 @@ interface NavbarProps {
 const NAV_LINKS = [
   { label: "Home", href: "/" },
   { label: "Courses", href: "/#courses" },
+  { label: "Blog", href: "/blog" },
   { label: "Outcomes", href: "/#outcomes" },
   { label: "About", href: "/about" },
   { label: "Contact", href: "/contact" },
@@ -20,6 +22,7 @@ const NAV_LINKS = [
 export default function Navbar({ onRegisterClick }: NavbarProps) {
   const [menuOpen, setMenuOpen] = useState(false);
   const [activeSection, setActiveSection] = useState<string>("");
+  const pathname = usePathname();
   const prefersReduced = useReducedMotion();
 
   // ── Active section detection ──────────────────────────────────────────────
@@ -103,8 +106,8 @@ export default function Navbar({ onRegisterClick }: NavbarProps) {
             role="list"
           >
             {NAV_LINKS.map((link) => {
-              const sectionId = link.href.replace("/#", "");
-              const isActive = activeSection === sectionId;
+              const sectionId = link.href.startsWith("/#") ? link.href.slice(2) : link.href.slice(1);
+              const isActive = pathname === link.href || activeSection === sectionId;
               return (
                 <li key={link.href}>
                   <a
@@ -210,8 +213,8 @@ export default function Navbar({ onRegisterClick }: NavbarProps) {
             <div className="max-w-7xl mx-auto px-4 sm:px-6 py-5 flex flex-col gap-1">
               <ul className="list-none m-0 p-0 flex flex-col gap-1" role="list">
                 {NAV_LINKS.map((link) => {
-                  const sectionId = link.href.replace("/#", "");
-                  const isActive = activeSection === sectionId;
+                  const sectionId = link.href.startsWith("/#") ? link.href.slice(2) : link.href.slice(1);
+                  const isActive = pathname === link.href || activeSection === sectionId;
                   return (
                     <li key={link.href}>
                       <a

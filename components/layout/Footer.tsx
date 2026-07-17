@@ -76,6 +76,7 @@ const ICON_MAP: Record<string, React.ReactNode> = {
 
 const QUICK_LINKS = [
   { label: "Courses", href: "/#courses" },
+  { label: "Blog", href: "/blog" },
   { label: "About", href: "/about" },
   { label: "Contact", href: "/contact" },
 ];
