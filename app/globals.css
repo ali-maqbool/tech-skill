@@ -415,6 +415,11 @@ button,
 }
 
 @media (max-width: 767px) {
+  .courses-carousel-wrapper.courses-sticky-frame {
+    height: 100svh !important;
+    min-height: 0;
+  }
+
   .hero-section {
     min-height: 100svh;
     min-height: 100dvh;
