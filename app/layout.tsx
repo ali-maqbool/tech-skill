@@ -1,15 +1,19 @@
-import type { Metadata } from "next";
-import localFont from "next/font/local";
+import type { Metadata, Viewport } from "next";
+import { Inter, Space_Grotesk } from "next/font/google";
 import "./globals.css";
 
-const inter = localFont({
-  src: "./fonts/GeistVF.woff",
+const inter = Inter({
+  subsets: ["latin"],
+  weight: ["400", "500", "600", "700"],
   variable: "--font-sans",
+  display: "swap",
 });
 
-const spaceGrotesk = localFont({
-  src: "./fonts/GeistVF.woff",
+const spaceGrotesk = Space_Grotesk({
+  subsets: ["latin"],
+  weight: ["500", "600", "700"],
   variable: "--font-display",
+  display: "swap",
 });
 
 export const metadata: Metadata = {
@@ -26,10 +30,14 @@ export const metadata: Metadata = {
   ],
 };
 
-export const viewport = {
-  themeColor: "#1a3340",
+// ── This is what actually injects the <meta name="viewport"> tag. ──────────
+// Without width:"device-width" + initialScale:1, mobile browsers render
+// the page at ~980px wide and scale it down — causing the "desktop on mobile" look.
+export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
+  maximumScale: 5,
+  themeColor: "#f8faff",
 };
 
 export default function RootLayout({

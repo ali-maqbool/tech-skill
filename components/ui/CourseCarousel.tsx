@@ -82,9 +82,13 @@ export function CourseCarousel({
 }: CourseCarouselProps) {
   const prefersReduced = useReducedMotion();
   const carouselRef = React.useRef<HTMLDivElement>(null);
-  const [containerWidth, setContainerWidth] = React.useState(
-    typeof window === "undefined" ? 1280 : window.innerWidth
-  );
+
+  // ── SSR-safe width measurement ────────────────────────────────────────────
+  // Always initialise to 0 so SSR and first client render are identical.
+  // The ResizeObserver sets the real width immediately after mount.
+  // This prevents the hydration mismatch that caused "desktop layout on mobile reload".
+  const [containerWidth, setContainerWidth] = React.useState(0);
+  const [isMounted, setIsMounted] = React.useState(false);
   const geo = useCarouselGeometry(containerWidth);
   const maxIndex = Math.max(0, courses.length - 1);
 
@@ -98,7 +102,10 @@ export function CourseCarousel({
     const element = carouselRef.current;
     if (!element) return;
 
-    const updateWidth = () => setContainerWidth(Math.max(1, element.clientWidth));
+    const updateWidth = () => {
+      setContainerWidth(Math.max(1, element.clientWidth));
+      setIsMounted(true);
+    };
     updateWidth();
     const observer = new ResizeObserver(updateWidth);
     observer.observe(element);
@@ -125,6 +132,21 @@ export function CourseCarousel({
   if (!courses.length) return null;
 
   const effectiveTx: Transition = prefersReduced ? { duration: 0 } : transition;
+
+  // ── While the real width hasn't been measured yet, render a transparent
+  // placeholder div at full size. This ensures the carousel ref gets attached
+  // and measured correctly before any geometry-dependent rendering happens.
+  // This is what prevents the "desktop card on mobile reload" hydration bug.
+  if (!isMounted) {
+    return (
+      <div
+        ref={carouselRef}
+        className={cn("relative isolate h-full w-full", className)}
+        style={{ overflow: "hidden" }}
+        aria-hidden="true"
+      />
+    );
+  }
 
   return (
     <div
