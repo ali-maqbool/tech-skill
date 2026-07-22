@@ -330,25 +330,15 @@ button,
 /* ============================================================
    Courses carousel — responsive wrapper heights
    ============================================================ */
-.courses-carousel-wrapper { height: 700px; }
-@media (max-width: 479px)  { .courses-carousel-wrapper { height: 480px !important; } }
-@media (min-width: 480px) and (max-width: 767px)  { .courses-carousel-wrapper { height: 540px !important; } }
-@media (min-width: 768px) and (max-width: 1023px) { .courses-carousel-wrapper { height: 640px !important; } }
+.courses-carousel-wrapper { height: 560px; }
+@media (max-width: 479px)  { .courses-carousel-wrapper { height: 575px !important; } }
+@media (min-width: 480px) and (max-width: 767px)  { .courses-carousel-wrapper { height: 590px !important; } }
+@media (min-width: 768px) and (max-width: 1023px) { .courses-carousel-wrapper { height: 560px !important; } }
 
-/* The course frame stays pinned while three course states advance with scroll.
-   On mobile we keep the sticky effect but use 100svh so it fills the screen. */
 .courses-sticky-frame {
   position: sticky;
-  top: 0;
+  top: 80px;
   z-index: 20;
-  height: 100svh !important;
-  min-height: 32rem;
-}
-
-@media (max-width: 767px) {
-  .courses-sticky-frame {
-    min-height: 28rem;
-  }
 }
 
 /* Faster, still readable motion for both marquee sections. */
@@ -415,11 +405,6 @@ button,
 }
 
 @media (max-width: 767px) {
-  .courses-carousel-wrapper.courses-sticky-frame {
-    height: 100svh !important;
-    min-height: 0;
-  }
-
   .hero-section {
     min-height: 100svh;
     min-height: 100dvh;
@@ -594,6 +579,8 @@ button,
 }
 
 @media (max-width: 359px) {
+  .courses-carousel-wrapper { height: 550px !important; }
+
   .hero-content {
     padding-left: 0.75rem !important;
     padding-right: 0.75rem !important;

@@ -37,7 +37,7 @@ export default function CoursesSection({ courses, onRegisterClick, enrollmentCou
         const track = scrollTrackRef.current;
         if (!track) return;
         const availableScroll = Math.max(track.offsetHeight - window.innerHeight, 1);
-        const travelled = Math.max(0, -track.getBoundingClientRect().top);
+        const travelled = Math.max(0, -track.getBoundingClientRect().top + 80);
         const progress = Math.min(0.999, travelled / availableScroll);
         const nextCourse = Math.min(stickySteps - 1, Math.floor(progress * stickySteps));
         setActiveCourse((current) => current === nextCourse ? current : nextCourse);
@@ -67,7 +67,7 @@ export default function CoursesSection({ courses, onRegisterClick, enrollmentCou
     >
       <div style={{ maxWidth: "1200px", margin: "0 auto", padding: "0 1.5rem" }}>
 
-        {/* Section header — unchanged */}
+        {/* Section header */}
         <motion.div
           variants={prefersReduced ? undefined : revealStagger}
           initial={prefersReduced ? undefined : "hidden"}
@@ -90,7 +90,7 @@ export default function CoursesSection({ courses, onRegisterClick, enrollmentCou
           </motion.h2>
           <motion.p
             variants={prefersReduced ? undefined : revealChild}
-            style={{ color: "var(--color-text-muted)", fontSize: "1rem", lineHeight: 1.65, maxWidth: "520px", margin: "0 auto" }}
+            style={{ color: "var(--color-text-muted)", fontSize: "1rem", lineHeight: 1.65, maxWidth: "680px", margin: "0 auto" }}
           >
             Choose from our industry-leading courses. Click any card to explore, then hit Register.
           </motion.p>
@@ -99,34 +99,34 @@ export default function CoursesSection({ courses, onRegisterClick, enrollmentCou
       </div>
 
       {/*
-        Carousel — sits edge-to-edge below the header.
-        Height drives the visual space; the diagonal stack needs room to breathe.
-        On mobile we reduce the height and card size via CSS.
+        Scroll track — drives the sticky card-switching effect.
+        Height = stickySteps × 50svh (compact — enough scroll distance
+        to cycle 3 cards without creating a huge empty gap).
       */}
       <div
         ref={scrollTrackRef}
         className="courses-scroll-track"
-        style={{ height: prefersReduced ? "100svh" : `${Math.max(stickySteps, 1) * 100}svh` }}
+        style={{ height: prefersReduced ? "auto" : `${Math.max(stickySteps, 1) * 50}svh` }}
       >
-      <motion.div
-        initial={prefersReduced ? false : { opacity: 0 }}
-        whileInView={{ opacity: 1 }}
-        viewport={{ once: true }}
-        transition={{ duration: 0.6, delay: 0.25 }}
-        className={`courses-carousel-wrapper ${prefersReduced ? "" : "courses-sticky-frame"}`}
-      >
-        <CourseCarousel
-          courses={courses}
-          onRegisterClick={onRegisterClick}
-          enrollmentCounts={enrollmentCounts}
-          activeIndex={activeCourse}
-          onActiveIndexChange={setActiveCourse}
-          defaultActiveIndex={0}
-          loop={false}
-          showControls
-          showDots
-        />
-      </motion.div>
+        <motion.div
+          initial={prefersReduced ? false : { opacity: 0 }}
+          whileInView={{ opacity: 1 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.6, delay: 0.25 }}
+          className={`courses-carousel-wrapper ${prefersReduced ? "" : "courses-sticky-frame"}`}
+        >
+          <CourseCarousel
+            courses={courses}
+            onRegisterClick={onRegisterClick}
+            enrollmentCounts={enrollmentCounts}
+            activeIndex={activeCourse}
+            onActiveIndexChange={setActiveCourse}
+            defaultActiveIndex={0}
+            loop={false}
+            showControls
+            showDots
+          />
+        </motion.div>
       </div>
 
     </section>

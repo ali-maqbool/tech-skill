@@ -7,10 +7,45 @@ import { founder, teamMembers } from "@/data/teams";
 import { fadeInUp, viewportOnce } from "@/components/animations/motionVariants";
 
 // ─────────────────────────────────────────────────────────────────────────────
+// Founder Stats Data
+// Local array unique to the founder block
+// ─────────────────────────────────────────────────────────────────────────────
+const FOUNDER_STATS = [
+  {
+    icon: "/education.png",
+    alt: "Years Experience",
+    value: "5+",
+    label: "Years Experience",
+    subtext: "Digital Growth & EdTech",
+  },
+  {
+    icon: "/team.png",
+    alt: "Students Trained",
+    value: "700+",
+    label: "Students Trained",
+    subtext: "Across Pakistan",
+  },
+  {
+    icon: "/growth.png",
+    alt: "Online Projects",
+    value: "7+",
+    label: "Online Projects",
+    subtext: "Live Agency & EdTech",
+  },
+  {
+    icon: "/trophy.png",
+    alt: "Practical Training",
+    value: "98.7%",
+    label: "Practical Training",
+    subtext: "Hands-on Learning",
+  },
+];
+
+// ─────────────────────────────────────────────────────────────────────────────
 // TeamSection
 // Structure:
 //   1. Section header (label + heading + subtitle)
-//   2. Founder Spotlight  ← new block, above the slideshow
+//   2. Founder Spotlight  ← includes 4-column stats row beneath description
 //   3. Marquee slideshow  ← preserved pixel-for-pixel; only data source changed
 // ─────────────────────────────────────────────────────────────────────────────
 
@@ -66,8 +101,6 @@ export default function TeamSection() {
         </motion.div>
 
         {/* ── 2. Founder Spotlight ──────────────────────────── */}
-        {/* All content is pulled from data/teams.ts → founder.  */}
-        {/* To update: edit that file only. No JSX changes needed. */}
         <motion.div
           variants={prefersReduced ? undefined : fadeInUp}
           initial={prefersReduced ? undefined : "hidden"}
@@ -94,8 +127,8 @@ export default function TeamSection() {
             />
           </div>
 
-          {/* Text */}
-          <div className="flex flex-col gap-1 text-center sm:text-left">
+          {/* Text content & Stats row */}
+          <div className="flex flex-col gap-1 text-center sm:text-left flex-1 w-full">
             {/* Founder badge */}
             <span
               className="inline-flex self-center sm:self-start text-[10px] font-bold uppercase tracking-[0.18em] px-2.5 py-1 rounded-full mb-1"
@@ -128,13 +161,78 @@ export default function TeamSection() {
             >
               {founder.bio}
             </p>
+
+            {/* ── Founder Stats Row ──────────────────────────── */}
+            <div
+              className="mt-5 p-3.5 sm:p-4 rounded-xl w-full"
+              style={{
+                backgroundColor: "rgba(255, 255, 255, 0.36)",
+                border: "1px solid rgba(0, 119, 204, 0.2)",
+              }}
+            >
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-y-4 gap-x-0">
+                {FOUNDER_STATS.map((stat, i) => {
+                  const borderClasses =
+                    i === 0
+                      ? "border-r border-b sm:border-b-0 border-[rgba(0,119,204,0.15)]"
+                      : i === 1
+                      ? "border-b sm:border-r sm:border-b-0 border-[rgba(0,119,204,0.15)]"
+                      : i === 2
+                      ? "border-r sm:border-r border-[rgba(0,119,204,0.15)]"
+                      : "";
+
+                  return (
+                    <div
+                      key={stat.label}
+                      className={`flex flex-col items-center text-center px-2 py-1 ${borderClasses}`}
+                    >
+                      {/* Circular badge */}
+                      <div
+                        className="w-10 h-10 sm:w-11 sm:h-11 rounded-full flex items-center justify-center mb-2 flex-shrink-0"
+                        style={{ backgroundColor: "rgba(0, 170, 255, 0.12)" }}
+                      >
+                        <Image
+                          src={stat.icon}
+                          alt={stat.alt}
+                          width={22}
+                          height={22}
+                          className="object-contain"
+                        />
+                      </div>
+
+                      {/* Stat Value */}
+                      <span
+                        className="text-lg sm:text-xl font-extrabold leading-tight"
+                        style={{ color: "var(--color-primary)" }}
+                      >
+                        {stat.value}
+                      </span>
+
+                      {/* Stat Label */}
+                      <span
+                        className="text-xs font-bold mt-0.5"
+                        style={{ color: "var(--color-text)" }}
+                      >
+                        {stat.label}
+                      </span>
+
+                      {/* Subtext */}
+                      <span
+                        className="text-[11px] font-medium leading-tight mt-0.5"
+                        style={{ color: "var(--color-text-muted)" }}
+                      >
+                        {stat.subtext}
+                      </span>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
           </div>
         </motion.div>
       </div>
 
       {/* ── 3. Marquee slideshow ─────────────────────────────── */}
-      {/* PRESERVED EXACTLY — only data source changed from inline to import. */}
-      {/* Do not modify class names, structure, or Marquee props below.        */}
       <div className="team-marquee relative w-full">
         {/* Left edge fade */}
         <div className="pointer-events-none absolute top-0 left-0 z-10 h-full w-32 bg-gradient-to-r from-white to-transparent dark:from-background" />

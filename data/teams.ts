@@ -27,7 +27,7 @@ export interface TeamMember {
 export const founder: Founder = {
   image: "/ali.png",
   name: "Ali Maqbool",
-  role: "Founder, Tech Skill · SEO, Fast Marketing Agency",
+  role: "Founder, Tech Skill · CEO, Fast Marketing Agency",
   bio: "Ali leads Tech Skill’s practical learning vision and brings hands-on digital growth experience from Fast Marketing Agency into every programme.",
   /*
     "Ali founded Tech Skill with a single conviction: that world-class digital skills should be within reach of every ambitious person in Pakistan. " +

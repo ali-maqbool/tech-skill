@@ -2,9 +2,9 @@
 
 import * as React from "react";
 import { motion, type Transition, AnimatePresence, useReducedMotion } from "framer-motion";
-import { ChevronLeft, ChevronRight } from "lucide-react";
+import { ChevronLeft, ChevronRight, Star, Clock, CalendarClock, Rocket, Award, Briefcase, GraduationCap, Target, Flame } from "lucide-react";
 import { cn } from "@/lib/utils";
-import type { Course } from "@/data/courses";
+import type { Course, CourseFeature } from "@/data/courses";
 
 // ── Icon map ──────────────────────────────────────────────────────────────────
 function getCourseIcon(id: string): string {
@@ -20,34 +20,57 @@ function getCourseIcon(id: string): string {
   }
 }
 
+// ── Feature Icon Map + Rotating Colors ────────────────────────────────────────
+const FEATURE_ICON_MAP: Record<string, React.ComponentType<{ width?: number; height?: number; className?: string; style?: React.CSSProperties }>> = {
+  Rocket, Award, Briefcase, GraduationCap, Target,
+};
+
+const FEATURE_COLORS = [
+  { bg: "rgba(0, 170, 255, 0.12)", fg: "#0077cc" },     // blue
+  { bg: "rgba(16, 185, 129, 0.12)", fg: "#059669" },     // emerald
+  { bg: "rgba(139, 92, 246, 0.12)", fg: "#7c3aed" },     // violet
+  { bg: "rgba(245, 158, 11, 0.12)", fg: "#d97706" },     // amber
+];
+
+function FeatureRow({ feature, index }: { feature: CourseFeature; index: number }) {
+  const IconComp = FEATURE_ICON_MAP[feature.icon] ?? Rocket;
+  const color = FEATURE_COLORS[index % FEATURE_COLORS.length];
+  return (
+    <div style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
+      <span style={{
+        display: "inline-flex", alignItems: "center", justifyContent: "center",
+        width: "1.45rem", height: "1.45rem", borderRadius: "6px",
+        backgroundColor: color.bg, color: color.fg, flexShrink: 0,
+      }}>
+        <IconComp width={13} height={13} />
+      </span>
+      <span style={{ fontSize: "0.7rem", color: "var(--color-text)", fontWeight: 500, lineHeight: 1.3 }}>
+        {feature.label}
+      </span>
+    </div>
+  );
+}
+
 // ── Helpers ───────────────────────────────────────────────────────────────────
 const clamp = (v: number, lo: number, hi: number) => Math.min(Math.max(v, lo), hi);
 
 const SPRING: Transition = { type: "spring", bounce: 0.16, duration: 0.85 };
 
 // ── Responsive geometry hook ──────────────────────────────────────────────────
-// Returns responsive geometry values. The vertical offset follows an arc
-// instead of the old diagonal stack.
 function useCarouselGeometry(width: number) {
-
   if (width < 360) {
-    // Very small phones (< 360px): active card fills almost the full width
-    return { width, slideSize: Math.max(1, width - 24), rotationStep: 6, arcRadius: 10, inactiveScale: 0.7, topPct: "3%" };
+    return { width, slideSize: Math.max(244, width - 48), rotationStep: 6, arcRadius: 10, inactiveScale: 0.68, topPct: "1%" };
   }
   if (width < 480) {
-    // Small phones: card is nearly full width, very gentle rotation
-    return { width, slideSize: Math.max(1, width - 28), rotationStep: 8, arcRadius: 14, inactiveScale: 0.72, topPct: "4%" };
+    return { width, slideSize: Math.max(244, width - 48), rotationStep: 14, arcRadius: 26, inactiveScale: 0.68, topPct: "1%" };
   }
   if (width < 768) {
-    // Phones / small tablets
-    return { width, slideSize: Math.min(320, width - 40), rotationStep: 12, arcRadius: 24, inactiveScale: 0.72, topPct: "5%" };
+    return { width, slideSize: Math.min(300, width - 56), rotationStep: 16, arcRadius: 32, inactiveScale: 0.66, topPct: "2%" };
   }
   if (width < 1024) {
-    // Tablets
-    return { width, slideSize: 300, rotationStep: 18, arcRadius: 46, inactiveScale: 0.64, topPct: "9%" };
+    return { width, slideSize: 300, rotationStep: 18, arcRadius: 40, inactiveScale: 0.64, topPct: "4%" };
   }
-  // Desktop
-  return { width, slideSize: 300, rotationStep: 20, arcRadius: 58, inactiveScale: 0.62, topPct: "13%" };
+  return { width, slideSize: 370, rotationStep: 20, arcRadius: 50, inactiveScale: 0.62, topPct: "3%" };
 }
 
 // ── Props ──────────────────────────────────────────────────────────────────────
@@ -75,18 +98,13 @@ export function CourseCarousel({
   loop = true,
   transition = SPRING,
   showControls = true,
-  // showDots prop kept for API compatibility; dots removed in favour of arrow buttons
-  showDots: _showDots = true, // eslint-disable-line @typescript-eslint/no-unused-vars
+  showDots: _showDots = true,
   className,
   enrollmentCounts,
 }: CourseCarouselProps) {
   const prefersReduced = useReducedMotion();
   const carouselRef = React.useRef<HTMLDivElement>(null);
 
-  // ── SSR-safe width measurement ────────────────────────────────────────────
-  // Always initialise to 0 so SSR and first client render are identical.
-  // The ResizeObserver sets the real width immediately after mount.
-  // This prevents the hydration mismatch that caused "desktop layout on mobile reload".
   const [containerWidth, setContainerWidth] = React.useState(0);
   const [isMounted, setIsMounted] = React.useState(false);
   const geo = useCarouselGeometry(containerWidth);
@@ -133,10 +151,6 @@ export function CourseCarousel({
 
   const effectiveTx: Transition = prefersReduced ? { duration: 0 } : transition;
 
-  // ── While the real width hasn't been measured yet, render a transparent
-  // placeholder div at full size. This ensures the carousel ref gets attached
-  // and measured correctly before any geometry-dependent rendering happens.
-  // This is what prevents the "desktop card on mobile reload" hydration bug.
   if (!isMounted) {
     return (
       <div
@@ -157,20 +171,12 @@ export function CourseCarousel({
       tabIndex={0}
       onKeyDown={handleKeyDown}
       className={cn("relative isolate h-full w-full outline-none", className)}
-      // Clip the side cards but allow the CTA + controls to show below
       style={{ overflow: "hidden", touchAction: "pan-y" }}
     >
-      {/* ── Diagonal stack ─────────────────────────────────── */}
-      {/*
-        We do NOT overflow:hidden on this inner div so the active card's
-        CTA button (which lives inside the slide) is never clipped.
-        The outer container clips the sides only.
-      */}
       <div
         style={{
           position: "absolute",
-          // Leave room at the bottom for the controls bar (56px) + some padding
-          top: 0, left: 0, right: 0, bottom: "60px",
+          top: 0, left: 0, right: 0, bottom: 0,
           overflow: "hidden",
         }}
       >
@@ -190,10 +196,13 @@ export function CourseCarousel({
             const distance = index - current;
             const icon     = getCourseIcon(course.id);
             const timing   = course.timings[0] ?? "";
-            const duration = course.Durtion ?? "";
+            const duration = course.Durtion ?? course.duration ?? "";
             const studentCount = enrollmentCounts?.[course.id] ?? course.students ?? 0;
             const arcDistance = Math.min(Math.abs(distance), 4);
             const arcY = (1 - Math.cos(arcDistance * (Math.PI / 5))) * geo.arcRadius;
+
+            const showBadge = Boolean(course.isPopular || course.isFeatured);
+            const badgeText = course.isPopular ? "Popular" : course.isFeatured ? "Featured" : "";
 
             return (
               <motion.div
@@ -207,7 +216,7 @@ export function CourseCarousel({
                 }}
                 transition={effectiveTx}
               >
-                {/* ── The card itself ── */}
+                {/* Card Button */}
                 <button
                   type="button"
                   aria-label={isActive ? `${course.name} — selected` : `Show ${course.name}`}
@@ -220,12 +229,11 @@ export function CourseCarousel({
                     className="course-card glass-card"
                     style={{
                       width: "100%",
-                      aspectRatio: "1 / 1.1",
                       borderRadius: "20px",
-                      padding: "1.25rem",
+                      padding: "1.4rem 1.25rem 1.5rem",
                       display: "flex",
                       flexDirection: "column",
-                      gap: "0.65rem",
+                      gap: "0.6rem",
                       backgroundColor: "var(--color-surface)",
                       borderTop: isActive
                         ? "3px solid rgba(0,170,255,0.85)"
@@ -235,7 +243,6 @@ export function CourseCarousel({
                         : "0 8px 24px rgba(0,0,0,0.35)",
                       transition: "border-color 0.3s, box-shadow 0.3s",
                       position: "relative",
-                      overflow: "hidden",
                     }}
                   >
                     {isActive && (
@@ -244,39 +251,101 @@ export function CourseCarousel({
                         background: "linear-gradient(135deg,rgba(0,170,255,0.06) 0%,transparent 60%)",
                       }} />
                     )}
-                    <div style={{ fontSize: "2rem", lineHeight: 1, userSelect: "none" }} aria-hidden="true">
-                      {icon}
+
+                    {/* Section 1: Icon Tile + Badge */}
+                    <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", width: "100%" }}>
+                      <div style={{
+                        width: "2.6rem", height: "2.6rem", borderRadius: "10px",
+                        backgroundColor: "rgba(0, 170, 255, 0.08)",
+                        border: "1px solid rgba(0, 170, 255, 0.15)",
+                        display: "flex", alignItems: "center", justifyContent: "center",
+                        fontSize: "1.35rem", lineHeight: 1, userSelect: "none", flexShrink: 0,
+                      }}>
+                        {icon}
+                      </div>
+                      {showBadge && (
+                        <span style={{
+                          display: "inline-flex", alignItems: "center", gap: "0.2rem",
+                          backgroundColor: "rgba(245, 158, 11, 0.12)", color: "#d97706",
+                          border: "1px solid rgba(245, 158, 11, 0.25)", borderRadius: "999px",
+                          padding: "0.15rem 0.5rem", fontSize: "0.6rem",
+                          fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.04em",
+                        }}>
+                          <Flame width={10} height={10} />
+                          {badgeText}
+                        </span>
+                      )}
                     </div>
-                    <h3 style={{ fontFamily: "var(--font-display,inherit)", fontSize: "1.05rem", fontWeight: 700, color: "#395186ff", margin: 0, lineHeight: 1.2 }}>
+
+                    {/* Section 2: Course Title */}
+                    <h3 style={{
+                      fontFamily: "var(--font-display,inherit)", fontSize: "1.05rem",
+                      fontWeight: 700, color: "#233066", margin: 0, lineHeight: 1.2,
+                    }}>
                       {course.name}
                     </h3>
-                    <div
-                      className="course-student-count"
-                      aria-label={`${studentCount.toLocaleString()} students enrolled in ${course.name}`}
-                    >
-                      <span className="course-student-count-icon" aria-hidden="true">👥</span>
-                      <span><strong>{studentCount.toLocaleString()}</strong> students enrolled</span>
-                    </div>
-                    <p style={{ color: "var(--color-text-muted)", fontSize: "0.78rem", lineHeight: 1.5, margin: 0, overflow: "hidden", display: "-webkit-box", WebkitLineClamp: 2, WebkitBoxOrient: "vertical", flexGrow: 1 }}>
-                      {course.description}
-                    </p>
-                    <div style={{ display: "flex", flexWrap: "wrap", gap: "0.35rem" }}>
-                      {[`⏰ ${timing}`, `⏱️ ${duration}`].map(chip => (
-                        <span key={chip} style={{ display: "inline-flex", alignItems: "center", backgroundColor: "rgba(0,170,255,0.1)", color: "var(--color-primary)", border: "1px solid rgba(0,170,255,0.22)", borderRadius: "999px", padding: "0.18rem 0.55rem", fontSize: "0.65rem", fontWeight: 500, whiteSpace: "nowrap" }}>
-                          {chip}
+
+                    {/* Section 3: Rating Row */}
+                    {course.rating != null && (
+                      <div style={{ display: "flex", alignItems: "center", gap: "0.3rem" }}>
+                        <Star width={13} height={13} style={{ color: "#f59e0b", fill: "#f59e0b" }} />
+                        <span style={{ fontSize: "0.72rem", fontWeight: 700, color: "#233066" }}>
+                          {course.rating}
                         </span>
-                      ))}
+                        <span style={{ fontSize: "0.65rem", color: "var(--color-text-muted)", fontWeight: 500 }}>
+                          ({studentCount.toLocaleString()}+ Students)
+                        </span>
+                      </div>
+                    )}
+
+                    {/* Section 4: Short Description */}
+                    <p style={{
+                      color: "var(--color-text-muted)", fontSize: "0.78rem", lineHeight: 1.5,
+                      margin: 0, overflow: "hidden", display: "-webkit-box",
+                      WebkitLineClamp: 3, WebkitBoxOrient: "vertical",
+                    }}>
+                      {course.shortDescription ?? course.description}
+                    </p>
+
+                    {/* Section 5: Divider */}
+                    <hr style={{ border: "none", borderTop: "1px solid rgba(0, 119, 204, 0.1)", margin: "0.1rem 0" }} />
+
+                    {/* Section 6: Feature Checklist */}
+                    {course.features && course.features.length > 0 && (
+                      <div style={{ display: "flex", flexDirection: "column", gap: "0.45rem", flexGrow: 1 }}>
+                        {course.features.map((feat, i) => (
+                          <FeatureRow key={feat.label} feature={feat} index={i} />
+                        ))}
+                      </div>
+                    )}
+
+                    {/* Section 7: Duration + Flexible Pills */}
+                    <div style={{ display: "flex", flexWrap: "wrap", gap: "0.35rem", marginTop: "auto" }}>
+                      {duration && (
+                        <span style={{
+                          display: "inline-flex", alignItems: "center", gap: "0.25rem",
+                          backgroundColor: "rgba(0, 170, 255, 0.1)", color: "var(--color-primary)",
+                          border: "1px solid rgba(0, 170, 255, 0.22)", borderRadius: "999px",
+                          padding: "0.18rem 0.55rem", fontSize: "0.62rem", fontWeight: 500,
+                        }}>
+                          <Clock width={11} height={11} /> {duration}
+                        </span>
+                      )}
+                      {(course.flexible || timing) && (
+                        <span style={{
+                          display: "inline-flex", alignItems: "center", gap: "0.25rem",
+                          backgroundColor: "rgba(16, 185, 129, 0.1)", color: "#059669",
+                          border: "1px solid rgba(16, 185, 129, 0.22)", borderRadius: "999px",
+                          padding: "0.18rem 0.55rem", fontSize: "0.62rem", fontWeight: 500,
+                        }}>
+                          <CalendarClock width={11} height={11} /> {course.flexible ?? timing}
+                        </span>
+                      )}
                     </div>
-                   
                   </div>
                 </button>
 
-                {/*
-                  ── CTA button — lives INSIDE the slide, centred under the card ──
-                  Visible only on the active slide. Because it's part of the same
-                  flex column as the card, "text-align: center" on the parent
-                  naturally centres it directly beneath the card with no extra math.
-                */}
+                {/* Section I: CTA Button */}
                 <AnimatePresence mode="wait" initial={false}>
                   {isActive && (
                     <motion.div
@@ -286,7 +355,7 @@ export function CourseCarousel({
                       exit={{ opacity: 0, y: 6, scale: 0.9 }}
                       transition={{ duration: 0.28, ease: "easeOut" }}
                       style={{
-                        marginTop: "1.75rem",
+                        marginTop: "1.15rem",
                         width: "100%",
                         display: "flex",
                         justifyContent: "center",
@@ -314,10 +383,9 @@ export function CourseCarousel({
         </motion.div>
       </div>
 
-      {/* ── Controls bar ───────────────────────────────────── */}
+      {/* Controls bar */}
       {showControls && (
         <>
-          {/* ← Prev arrow — left side, vertically centred */}
           <button
             type="button"
             aria-label="Previous course"
@@ -363,7 +431,6 @@ export function CourseCarousel({
             <ChevronLeft style={{ width: "clamp(16px, 2.5vw, 22px)", height: "clamp(16px, 2.5vw, 22px)" }} />
           </button>
 
-          {/* → Next arrow — right side, vertically centred */}
           <button
             type="button"
             aria-label="Next course"
