@@ -2,7 +2,7 @@
 
 import { motion } from "framer-motion";
 import type { Variants } from "framer-motion";
-import { Star, Clock, CalendarClock, Rocket, Award, Briefcase, GraduationCap, Target, Flame, type LucideProps } from "lucide-react";
+import { Star, Clock, CalendarClock, Rocket, Award, Briefcase, GraduationCap, Target, Flame } from "lucide-react";
 import { Course, CourseFeature } from "@/data/courses";
 import { cardHover } from "@/components/animations/motionVariants";
 

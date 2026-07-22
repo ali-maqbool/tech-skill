@@ -2,7 +2,7 @@
 
 import * as React from "react";
 import { motion, type Transition, AnimatePresence, useReducedMotion } from "framer-motion";
-import { ChevronLeft, ChevronRight, Star, Clock, CalendarClock, Rocket, Award, Briefcase, GraduationCap, Target, Flame, type LucideProps } from "lucide-react";
+import { ChevronLeft, ChevronRight, Star, Clock, CalendarClock, Rocket, Award, Briefcase, GraduationCap, Target, Flame } from "lucide-react";
 import { cn } from "@/lib/utils";
 import type { Course, CourseFeature } from "@/data/courses";
 
