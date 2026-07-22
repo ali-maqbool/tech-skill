@@ -21,7 +21,7 @@ function getCourseIcon(id: string): string {
 }
 
 // ── Feature Icon Map + Rotating Colors ────────────────────────────────────────
-const FEATURE_ICON_MAP: Record<string, React.ComponentType<{ width?: number; height?: number; className?: string; style?: React.CSSProperties }>> = {
+const FEATURE_ICON_MAP: Record<string, React.ElementType> = {
   Rocket, Award, Briefcase, GraduationCap, Target,
 };
 
@@ -98,7 +98,6 @@ export function CourseCarousel({
   loop = true,
   transition = SPRING,
   showControls = true,
-  showDots: _showDots = true,
   className,
   enrollmentCounts,
 }: CourseCarouselProps) {
