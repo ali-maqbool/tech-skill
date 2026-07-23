@@ -1,7 +1,7 @@
 import { COURSES } from "@/data/courses";
 import { SOCIAL_LINKS } from "@/data/contacts";
 
-export const SITE_URL = (process.env.NEXT_PUBLIC_SITE_URL || "https://techskill.pk").replace(/\/$/, "");
+export const SITE_URL = (process.env.NEXT_PUBLIC_SITE_URL || "https://www.techskill.pk").replace(/\/$/, "");
 export const SITE_NAME = "Tech Skill";
 export const SITE_DESCRIPTION =
   "Tech Skill offers practical technical courses in Islamabad, including graphic design, web development, digital marketing, video editing, freelancing, MS Office, Shopify, and Amazon training.";
@@ -24,7 +24,13 @@ export const organizationSchema = {
     streetAddress: "G-10 Markaz",
     addressLocality: "Islamabad",
     addressRegion: "Islamabad Capital Territory",
+    postalCode: "44000", // TODO: confirm exact postal code for G-10 Markaz
     addressCountry: "PK",
+  },
+  geo: {
+    "@type": "GeoCoordinates",
+    latitude: 33.6844, // TODO: confirm exact latitude for Tech Skill G-10 Markaz
+    longitude: 73.0479, // TODO: confirm exact longitude for Tech Skill G-10 Markaz
   },
   areaServed: [
     { "@type": "City", name: "Islamabad" },
