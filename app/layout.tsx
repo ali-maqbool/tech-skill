@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import localFont from "next/font/local";
+import Script from "next/script";
 import "./globals.css";
 import { SITE_DESCRIPTION, SITE_NAME, SITE_URL } from "@/lib/site-seo";
 
@@ -41,6 +42,21 @@ export const viewport: Viewport = {
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="en-PK">
+      <head>
+        <Script
+          src="https://www.googletagmanager.com/gtag/js?id=G-C9R055LK8D"
+          strategy="afterInteractive"
+        />
+        <Script id="google-analytics" strategy="afterInteractive">
+          {`
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+
+            gtag('config', 'G-C9R055LK8D');
+          `}
+        </Script>
+      </head>
       <body className={`${inter.variable} ${spaceGrotesk.variable} antialiased`} style={{ backgroundColor: "var(--color-background)" }}>
         {children}
       </body>
